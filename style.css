@@ -1,0 +1,115 @@
+/* @import url("https://fonts.googleapis.com/css?family=Song+Myung"); */
+/* @import url("https://fonts.googleapis.com/css?family=Catamaran"); */
+* {
+  /* font-family: 'Catamaran', serif; */
+}
+body {
+  --color1: hsl(2,86%,58%);
+  --color2: hsl(0,63%,32%);
+  color: #000;
+  margin: 0;
+  padding: 8px;
+}
+
+.block{
+  width: 600px;
+  height: 300px;
+  border: 2px dashed blue;
+  display: flex;
+}
+
+.container{
+  /* width: 400px; */
+  /* width: 1300px; */
+  /* height: 550px; */
+}
+
+.container span{
+  height: 1em;
+  display: inline-block;
+  /* margin-top: 10pt; */
+  background-color: #e9e9e9;
+}
+
+.container span:nth-child(9){
+  /* font-size: 120%;
+  font-style: italic;
+  margin-top: 20pt; */
+}
+
+.container p{
+  /* font-size: 20px; */
+  /* font-size: 60pt; */
+  line-height: 1;
+  margin: 0;
+}
+
+textarea{
+  border: 2px solid red;
+  width: 200px;
+}
+
+.p {
+  background: #a9a9a9;
+  border: 1px solid #000;
+  border-left: 0;
+  border-right: 0;
+  color: blue;
+
+/* margin as leading */
+  margin: 0;
+
+  /* font metrics */
+  --font: Catamaran;
+  --fm-emSquare: 1;
+  --fm-capitalHeight: 0.68;
+  --fm-descender: 0.54;
+  --fm-ascender: 1.1;
+  --fm-linegap: 0;
+
+  /* compute needed values */
+  --lineheightNormal: (var(--fm-ascender) + var(--fm-descender) + var(--fm-linegap));
+  --distanceBottom: (var(--fm-descender));
+  --distanceTop: (var(--fm-ascender) - var(--fm-capitalHeight));
+  --contentArea: (var(--lineheightNormal) * var(--computedFontSize));
+  --valign: ((var(--distanceBottom) - var(--distanceTop)) * var(--computedFontSize));
+  --computedFontSize: (var(--capital-height) / var(--fm-capitalHeight));
+  --computedLineheight: ((var(--line-height) * var(--capital-height)) - var(--valign));
+
+  /* desired capital height and line-height */
+  --capital-height: 100;
+  --line-height: 1;
+
+  /* set font family */
+  font-family: var(--font);
+
+  /* set capital height to equal font-size */
+  font-size: calc(var(--computedFontSize) * 1px);
+
+  /* set computed line-height */
+  line-height: calc(var(--computedLineheight) * 1px);
+
+}
+.c {
+  /* apply vertical align */
+  vertical-align: calc(var(--valign) * -1px);
+}
+.c::before {
+  content: '';
+  display: inline-block;
+  /* width: calc(1px * var(--capital-height)); */
+  width: 1px;
+  height: calc(1px * var(--capital-height));
+}
+
+.p1 {
+  --line-height: 2;
+}
+.p2 {
+  --capital-height: 75;
+  --line-height: 3;
+}
+
+font{
+  display: block;
+}
