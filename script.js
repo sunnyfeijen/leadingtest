@@ -211,8 +211,7 @@ $(document).ready(function() {
       }
 
       if( leading != '' && typeof leading != 'undefined' ){
-        leading = leading+ 'pt';
-        $(this).css("margin-top", leading);
+        $(this).css("margin-top", leading+ 'pt');
       }
 
 
