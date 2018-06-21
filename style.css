@@ -43,6 +43,10 @@ body {
   margin: 0;
 }
 
+.container p span{
+  /* display: block; */
+}
+
 textarea{
   border: 2px solid red;
   width: 200px;
