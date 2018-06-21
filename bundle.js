@@ -12619,7 +12619,6 @@ $(document).ready(function() {
 
   }
 
-
   function wrapLines(element){
 
     var spanInserted = $(element).html().split(" ").join(" </span><span>");
@@ -12642,8 +12641,6 @@ $(document).ready(function() {
     });
 
   }
-
-
 
   function setLeading(element, index) {
 
@@ -12671,8 +12668,40 @@ $(document).ready(function() {
 
   }
 
+  function removeNestedSpan(element){
+
+      $(element).children('.line').each(function(){
+
+        var length = $(this).children('span').length;
+        if( length > 0 ){
+
+          $(this).children('span').each(function(){
+
+            var text = $(this).html();
+            $(this).before(text);
+            $(this).remove();
+
+          })
+
+          //combine childnodes
+          $(this)[0].normalize();
+        }
+
+      })
+
+    }
 
 
+
+    $('p').on('focusout', function() {
+
+      removeNestedSpan(this);
+
+      //update leading
+      var index = $(this).prevAll('p').length;
+      setLeading(this, index);
+
+    });
 
 
   $('.block').each(function(){
@@ -12696,6 +12725,13 @@ $(document).ready(function() {
 
   }
 
+
+$('.output').on('click', function() {
+  var text;
+
+  var output = 'output';
+  $('#output').empty().append(output);
+});
 
 
 
