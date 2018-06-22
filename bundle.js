@@ -12497,7 +12497,7 @@ $(document).ready(function() {
       fontLoad(this, length, i);
       setFont(this);
       wrapLines(this);
-
+      removeBr(this);
       setLeading(this, i);
 
       //set leading
@@ -12690,11 +12690,54 @@ $(document).ready(function() {
 
     }
 
+  function removeBr(element){
+
+    $(element).children('.line').each(function(){
+
+      var children = $(this)[0].childNodes;
+
+      for (var i = 0; i < children.length; i++) {
+
+        var text = '';
+        var nextSibling = children[i].nextSibling;
+        var element = this;
+
+        // if nodetype is text
+        if( children[i].nodeType === 3 ){
+            var text = children[i].nodeValue;
+            var newElement = $(element).clone();
+
+            // Merge multiple successive text nodes
+            if( nextSibling != null && nextSibling.nodeType === 3 && text != '' ){
+              text = text + nextSibling.nodeValue
+              i++;
+            }
+
+            $(newElement).html('').html(text);
+            $(element).before( newElement );
+        }
+
+        // if Next sibling is <br>
+        if( nextSibling != null && nextSibling.nodeType === 1 && text != '' ){
+          $(element).before('<nextline>');
+        }
+
+      }
+
+      $(this).remove();
+
+    });
+
+  }
+
+
+
 
 
     $('p').on('focusout', function() {
 
       removeNestedSpan(this);
+      removeBr(this);
 
       //update leading
       var index = $(this).prevAll('p').length;
