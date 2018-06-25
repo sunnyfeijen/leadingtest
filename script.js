@@ -2,94 +2,81 @@ $(document).ready(function() {
 
   $('.block').each(function(i) {
 
-    // set vertical align
-    var vertical_align = $(this).attr('vertical-align');
-    if( vertical_align == '' || typeof vertical_align === 'undefined' ){
-      vertical_align = 'top';
-    }
+    blockFormat(this);
 
-    if( vertical_align == 'top'){
-      $(this).css("align-items", "flex-start");
-    }
-
-    if( vertical_align == 'center'){
-      $(this).css("align-items", "center");
-    }
-
-    if( vertical_align == 'bottom'){
-      $(this).css("align-items", "flex-end");
-    }
+  });
 
 
+  function blockFormat(element){
 
-    // set horizontal align
-    var align = $(this).attr('align');
-    if( align == '' || typeof align === 'undefined' ){
-      align = 'left';
-    }
-
-    if( align == 'left'){
-      $(this).css("justify-content", "flex-start");
-    }
-
-    if( align == 'center'){
-      $(this).css("justify-content", "space-around");
-      $(this).css("text-align", "center");
-    }
-
-    if( align == 'right'){
-      $(this).css("justify-content", "flex-end");
-    }
-
+    verticalAlign(element);
+    horizontalAlign(element);
 
     // set paragraph options
-    var length = $(this).find('p').length;
-    $(this).find('p').each(function(i) {
+    var length = $(element).find('p').length;
+    $(element).find('p').each(function(i) {
 
       fontLoad(this, length, i);
       setFont(this);
       wrapLines(this);
       removeBr(this);
       setLeading(this, i);
-
-      //set leading
-      // var leading = $(this).attr('leading')+ 'pt';
-      //
-      // if( vertical_align == 'top' ){
-      //   //remove leading from top line
-      //   if( leading != '' && typeof leading != 'undefined' && i == 0 ){
-      //
-      //   }
-      //
-      //   if( leading != '' && typeof leading != 'undefined' && i != 0 ){
-      //     // $(this).css("margin-top", leading);
-      //     setLeading( this );
-      //   }
-      // }
-      //
-      //
-      //
-      // if( vertical_align == 'bottom'){
-      //   //align baseline with bottom
-      //
-      //   if( leading != '' && typeof leading != 'undefined' && i != (length -1) ){
-      //     setLeading( this );
-      //   }
-      //
-      //   if( leading != '' && typeof leading != 'undefined' && i == (length -1) ){
-      //     setLeading( this );
-      //     //compensateLeading( this );
-      //   }
-      //
-      // }
-
-
     });
 
-  });
+    $(element).find('font').each(function(i) {
+
+      fontLoad(this, length, i);
+      setFont(this);
+      wrapLines(this);
+      removeBr(this);
+      setLeading(this, i);
+      nextline(this);
+    });
+
+  }
 
 
+  function verticalAlign(element){
 
+    // set vertical align
+    var vertical_align = $(element).attr('vertical-align');
+    if( vertical_align == '' || typeof vertical_align === 'undefined' ){
+      vertical_align = 'top';
+    }
+
+    if( vertical_align == 'top'){
+      $(element).css("align-items", "flex-start");
+    }
+
+    if( vertical_align == 'center'){
+      $(element).css("align-items", "center");
+    }
+
+    if( vertical_align == 'bottom'){
+      $(element).css("align-items", "flex-end");
+    }
+  }
+
+  function horizontalAlign(element){
+    // set horizontal align
+    var align = $(element).attr('align');
+    if( align == '' || typeof align === 'undefined' ){
+      align = 'left';
+    }
+
+    if( align == 'left'){
+      $(element).css("justify-content", "flex-start");
+    }
+
+    if( align == 'center'){
+      $(element).css("justify-content", "space-around");
+      $(element).css("text-align", "center");
+    }
+
+    if( align == 'right'){
+      $(element).css("justify-content", "flex-end");
+    }
+  }
 
 
   function fontLoad(element, length, i) {
@@ -118,7 +105,7 @@ $(document).ready(function() {
     $(element).css("font-family", fontFamily);
 
     // set font size
-    var fontSize = $(element).attr('font-size')+'pt';
+    var fontSize = $(element).attr('fontsize')+'pt';
     $(element).css("font-size", fontSize);
 
   }
@@ -179,6 +166,8 @@ $(document).ready(function() {
     var refPos = $(element).children('span').first().position().top;
     var newPos;
 
+    //console.log( $(element).html() );
+
     $(element).find('span').each(function(index) {
         newPos = $(this).position().top;
         $(this).addClass('line');
@@ -186,6 +175,12 @@ $(document).ready(function() {
            return;
         }
         if (newPos == refPos){
+
+            var firstChild = $(this).prev()[0].firstChild.nodeName;
+            if( firstChild != null && firstChild == 'NEXTLINE' ){
+              $(element).prepend( '<nextline></nextline>' );
+            }
+
             $(this).prepend($(this).prev().text() + " ");
             $(this).prev().remove();
         }
@@ -196,12 +191,13 @@ $(document).ready(function() {
 
   function setLeading(element, index) {
 
-    var fontSize = $(element).attr('font-size');
+    var fontSize = $(element).attr('fontsize');
     var leading = $(element).attr('leading');
     leading = leading - fontSize;
     if( leading < 0 ){
       leading = 0;
     }
+
 
     $(element).find('.line').each(function(i) {
 
@@ -254,6 +250,8 @@ $(document).ready(function() {
         var nextSibling = children[i].nextSibling;
         var element = this;
 
+        //console.log( children[i] );
+
         // if nodetype is text
         if( children[i].nodeType === 3 ){
             var text = children[i].nodeValue;
@@ -271,7 +269,7 @@ $(document).ready(function() {
 
         // if Next sibling is <br>
         if( nextSibling != null && nextSibling.nodeType === 1 && text != '' ){
-          $(element).before('<nextline>');
+          //$(element).before('<nextline>');
         }
 
       }
@@ -282,6 +280,17 @@ $(document).ready(function() {
 
   }
 
+  function nextline(element){
+
+    $(element).find('nextline').each(function(){
+
+      var clone = $(this).next('.line').clone().html('&nbsp').addClass('nextline');
+      $(this).before( clone );
+      $(this).remove();
+
+    });
+
+  }
 
 
 
@@ -308,24 +317,30 @@ $(document).ready(function() {
 
   });
 
-  function makeEditable(element){
 
+  var block2 = $('#block2');
+  var string = '<font fontname="Herculanum" fontsize="150" align="left" leading="112" fillcolor="{ cmyk 0,0,0,1 }" >Honing</font><font fontname="AmericanTypewriter" align="left" fontsize="24" leading="30" fillcolor="30" ><nextline />in knijpfles bijvoorbeeld:</font>';
 
-    // var quill = new Quill( $(element)[0], {
-    //   theme: 'snow'
-    // });
-    //
-    // quill.setText('Gandalf the Grey');
+  formatInit(block2, string);
+
+  function formatInit(element, value){
+
+    var container = $(element).find('.container');
+
+    console.log( value );
+    $(string).each(function(){
+
+      $(container).append(this);
+
+    })
+
+    blockFormat(element);
+
 
   }
 
 
-$('.output').on('click', function() {
-  var text;
 
-  var output = 'output';
-  $('#output').empty().append(output);
-});
 
 
 
