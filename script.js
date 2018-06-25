@@ -10,7 +10,7 @@ $(document).ready(function() {
   function blockFormat(element){
 
     verticalAlign(element);
-    horizontalAlign(element);
+
 
     // set paragraph options
     var length = $(element).find('p').length;
@@ -25,12 +25,13 @@ $(document).ready(function() {
 
     $(element).find('font').each(function(i) {
 
+      horizontalAlign(this);
       fontLoad(this, length, i);
       setFont(this);
       wrapLines(this);
       removeBr(this);
       setLeading(this, i);
-      nextline(this);
+      formatNextline(this);
     });
 
   }
@@ -59,22 +60,24 @@ $(document).ready(function() {
 
   function horizontalAlign(element){
     // set horizontal align
-    var align = $(element).attr('align');
-    if( align == '' || typeof align === 'undefined' ){
-      align = 'left';
+    var alignment = $(element).attr('alignment');
+    if( alignment == '' || typeof alignment === 'undefined' ){
+      alignment = 'left';
     }
 
-    if( align == 'left'){
-      $(element).css("justify-content", "flex-start");
+    if( alignment == 'left'){
+      $(element).css("justify-self", "flex-start");
+      $(element).css("text-align", "left");
     }
 
-    if( align == 'center'){
-      $(element).css("justify-content", "space-around");
+    if( alignment == 'center'){
+      $(element).css("justify-self", "space-around");
       $(element).css("text-align", "center");
     }
 
-    if( align == 'right'){
-      $(element).css("justify-content", "flex-end");
+    if( alignment == 'right'){
+      $(element).css("justify-self", "flex-end");
+      $(element).css("text-align", "right");
     }
   }
 
@@ -280,7 +283,7 @@ $(document).ready(function() {
 
   }
 
-  function nextline(element){
+  function formatNextline(element){
 
     $(element).find('nextline').each(function(){
 
@@ -319,7 +322,7 @@ $(document).ready(function() {
 
 
   var block2 = $('#block2');
-  var string = '<font fontname="Herculanum" fontsize="150" align="left" leading="112" fillcolor="{ cmyk 0,0,0,1 }" >Honing</font><font fontname="AmericanTypewriter" align="left" fontsize="24" leading="30" fillcolor="30" ><nextline />in knijpfles bijvoorbeeld:</font>';
+  var string = '<font fontname="Herculanum" fontsize="60" alignment="left" leading="70" fillcolor="{ cmyk 0,0,0,1 }" >Honing</font><font fontname="AmericanTypewriter" alignment="left" fontsize="24" leading="30" fillcolor="30" ><nextline />in knijpfles bijvoorbeeld:</font>';
 
   formatInit(block2, string);
 
@@ -340,6 +343,45 @@ $(document).ready(function() {
   }
 
 
+
+  $('.output').on('click', function() {
+    formatOutput( $('#block2') );
+  });
+
+  function formatOutput(element){
+
+    var output = '';
+
+    $(element).find('font').each(function(){
+
+      var clone = $(this).clone();
+      $(clone).removeAttr('style');
+
+      var fontValue = '';
+
+      $(clone).find('.line').each(function(){
+
+        var lineValue = $(this)[0].innerHTML;
+
+        if( $(this)[0].innerHTML == '&nbsp;' ){
+          lineValue = '<nextline />';
+        }
+
+        fontValue += lineValue.replace(/ +(?= )/g,'');
+
+
+      });
+
+      $(clone).html(fontValue);
+
+      output += $(clone)[0].outerHTML
+
+    });
+
+    console.log('output:');
+    console.log(output);
+
+  }
 
 
 
