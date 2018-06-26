@@ -58,9 +58,12 @@ body {
   /* display: block; */
 }
 
-textarea{
-  border: 2px solid red;
-  width: 200px;
+.tabs-row{
+  border-bottom: 1px solid green;
+}
+
+.tabs-row .tabs-tab{
+  display: inline-block;
 }
 
 .p {

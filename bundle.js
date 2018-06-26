@@ -12450,7 +12450,16 @@ $(document).ready(function() {
 
   $('.block').each(function(i) {
 
-    blockFormat(this);
+    var type = $(this).attr('type');
+
+    if( type == 'textflow' ){
+      blockFormat(this);
+    }
+
+    if( type == 'tabflow' ){
+      //tabFormat(this);
+      // tabFormatInit(tabBlock, tabString);
+    }
 
   });
 
@@ -12483,7 +12492,6 @@ $(document).ready(function() {
     });
 
   }
-
 
   function verticalAlign(element){
 
@@ -12528,7 +12536,6 @@ $(document).ready(function() {
       $(element).css("text-align", "right");
     }
   }
-
 
   function fontLoad(element, length, i) {
 
@@ -12745,56 +12752,35 @@ $(document).ready(function() {
 
 
 
-
-    $('p').on('focusout', function() {
-
-      removeNestedSpan(this);
-      removeBr(this);
-
-      //update leading
-      var index = $(this).prevAll('p').length;
-      setLeading(this, index);
-
-    });
-
-
-  $('.block').each(function(){
-
-    var editable = $(this).attr('editable');
-
-    if(editable){
-      makeEditable( $(this) );
-    }
-
-  });
-
-
-  var block2 = $('#block2');
+  var block = $('#block2');
   var string = '<font fontname="Herculanum" fontsize="60" alignment="left" leading="70" fillcolor="{ cmyk 0,0,0,1 }" >Honing</font><font fontname="AmericanTypewriter" alignment="left" fontsize="24" leading="30" fillcolor="30" ><nextline />in knijpfles bijvoorbeeld:</font>';
 
-  formatInit(block2, string);
+  var tabBlock = $('#block3');
+  var tabString = '<font fontname="AmericanTypewriter" fontsize="20" leading="40" fillcolor="{ cmyk 0 0 0 1 }" alignment="left" >Jonge kaas platstuk 50+</font>\t<font fontname="AmericanTypewriter" fontsize="20" leading="40" fillcolor="{ cmyk 0 0 0 1 }" alignment="left" ></font>\t<font fontname="AmericanTypewriter" fontsize="20" leading="40" fillcolor="{ cmyk 0 0 0 1 }" alignment="left" class=schrapprijs>5.75</font>\t<font fontname="VeneerW01-Two" fontsize="40" leading="20" fillcolor="cmyk { 0 0 0 1 }" alignment="left" >4.99</font>\n<font fontname="AmericanTypewriter" fontsize="20" leading="40" fillcolor="{ cmyk 0 0 0 1 }" alignment="left" >Jong belegen platstuk 50+</font>\t<font fontname="AmericanTypewriter" fontsize="20" leading="40" fillcolor="{ cmyk 0 0 0 1 }" alignment="left" ></font>\t<font fontname="AmericanTypewriter" fontsize="20" leading="40" fillcolor="{ cmyk 0 0 0 1 }" alignment="left" class=schrapprijs>6.49</font>\t<font fontname="VeneerW01-Two" fontsize="40" leading="20" fillcolor="cmyk { 0 0 0 1 }" alignment="left" >5.49</font>\n<font fontname="AmericanTypewriter" fontsize="20" leading="40" fillcolor="{ cmyk 0 0 0 1 }" alignment="left" >Belegen kaas platstuk 50+</font>\t<font fontname="AmericanTypewriter" fontsize="20" leading="40" fillcolor="{ cmyk 0 0 0 1 }" alignment="left" ></font>\t<font fontname="AmericanTypewriter" fontsize="20" leading="40" fillcolor="{ cmyk 0 0 0 1 }" alignment="left" class=schrapprijs>6.99</font>\t<font fontname="VeneerW01-Two" fontsize="40" leading="20" fillcolor="cmyk { 0 0 0 1 }" alignment="left" >5.99</font>\n<font fontname="AmericanTypewriter" fontsize="20" leading="40" fillcolor="{ cmyk 0 0 0 1 }" alignment="left" >Oude kaas platstuk 50+</font>\t<font fontname="AmericanTypewriter" fontsize="20" leading="40" fillcolor="{ cmyk 0 0 0 1 }" alignment="left" ></font>\t<font fontname="AmericanTypewriter" fontsize="20" leading="40" fillcolor="{ cmyk 0 0 0 1 }" alignment="left" class=schrapprijs>7.99</font>\t<font fontname="VeneerW01-Two" fontsize="40" leading="20" fillcolor="cmyk { 0 0 0 1 }" alignment="left" >6.99</font>';
+
+  formatInit(block, string);
 
   function formatInit(element, value){
 
-    var container = $(element).find('.container');
+    var type = $(element).attr('type');
 
-    console.log( value );
-    $(string).each(function(){
+    if( type == 'textflow' ){
+      var container = $(element).find('.container');
 
-      $(container).append(this);
+      $(value).each(function(){
 
-    })
+        $(container).append(this);
 
-    blockFormat(element);
+      });
 
+      $(element).find('font').attr('contenteditable', 'true');
+
+      blockFormat(element);
+    }
 
   }
 
 
-
-  $('.output').on('click', function() {
-    formatOutput( $('#block2') );
-  });
 
   function formatOutput(element){
 
@@ -12803,6 +12789,7 @@ $(document).ready(function() {
     $(element).find('font').each(function(){
 
       var clone = $(this).clone();
+      $(clone).removeAttr('contenteditable');
       $(clone).removeAttr('style');
 
       var fontValue = '';
@@ -12831,6 +12818,190 @@ $(document).ready(function() {
 
   }
 
+
+  $('.output').on('click', function() {
+    formatOutput( $('#block2') );
+  });
+
+  $('font').on('focusout', function() {
+
+    // console.log('asd');
+    removeNestedSpan(this);
+    removeBr(this);
+
+    //update leading
+    var index = $(this).prevAll('font').length;
+    setLeading(this, index);
+
+  });
+
+  $('.block').each(function(){
+
+    var editable = $(this).attr('editable');
+    var type = $(this).attr('type');
+
+    if(editable){
+      makeEditable( $(this) );
+    }
+
+    if( type == 'tabflow' && editable ){
+      var font = $(this).find('font');
+      makeEditable( font );
+    }
+
+  });
+
+
+
+
+
+
+  //////////// TABFLOW \\\\\\\\\\\\\\
+
+  tabFormatInit(tabBlock, tabString);
+
+  function tabFormatInit(element, value){
+
+    var type = $(element).attr('type');
+    if( type == 'tabflow' ){
+
+      var rows = value.split("\n");
+      var tabs = [];
+
+      //foreach row
+      for (var i = 0; i < rows.length; i++) {
+        tabs[i] = rows[i].split("\t");
+        rows[i] = tabs[i];
+
+        //foreach tab in row
+        for (var tab = 0; tab < tabs.length; tab++) {
+
+          //console.log(i);
+          //console.log(tab);
+
+        }
+
+
+      }
+
+      for (var i = 0; i < rows.length; i++) {
+        // append row
+        $(element).find('.container').append("<div class='tabs-row'></div>");
+      }
+
+      var index = 0;
+      $(element).find('.tabs-row').each(function(){
+
+        for (var i = 0; i < rows[index].length; i++) {
+          //append tabs
+          $(this).append("<div class='tabs-tab'>"+rows[index][i]+"</div>");
+        }
+
+        index++;
+      });
+
+
+      tabFormat(element);
+
+    }
+
+  }
+
+  function tabFormat(element){
+
+    var width = '550pt';
+    var tabOptions = ['0', '260', '300', '440'];
+    $(element).css('width', width);
+
+    $(element).find('.tabs-row').each(function(){
+
+      var length = $(this).find('.tabs-tab').length;
+      $(this).find('font').each(function(i){
+
+        var alignment = $(this).attr('alignment');
+        if( alignment == '' || typeof alignment === 'undefined' ){
+          alignment = 'left';
+        }
+
+        if( alignment == 'center' ){
+          $(this).css('transform', 'translateX(-50%)');
+          $(this).css('text-align', 'center');
+        }
+
+        if( alignment == 'right' ){
+          $(this).css('transform', 'translateX(-100%)');
+          $(this).css('text-align', 'right');
+        }
+
+        if( i+1 < length ){
+          var width = tabOptions[i+1] - tabOptions[i];
+        }
+        if( i+1 == length ){
+          var width = 'auto';
+        }
+
+
+
+
+
+        $(this).css('width', width+'pt');
+        setFont(this);
+
+
+      })
+
+
+    });
+
+    //console.log(element);
+
+  };
+
+
+  $('.taboutput').on('click', function() {
+    formatTabOutput( $('#block3') );
+  });
+
+
+  function formatTabOutput(element){
+
+    var output = '';
+    var rowIndex = 1;
+    var rowLength = $(element).find('.tabs-row').length;
+    $(element).find('.tabs-row').each(function(){
+
+      var clone = $(this).clone();
+      var rowValue = '';
+      var tabIndex = 1;
+      var tabLength = $(clone).find('.tabs-tab').length;
+      $(clone).find('font').each(function(){
+
+        $(this).removeAttr('contenteditable');
+        $(this).removeAttr('style');
+
+        var tabValue = $(this)[0].outerHTML;
+
+        if( tabIndex < tabLength ){
+          tabValue += '\\t';
+        }
+
+        rowValue += tabValue;
+        tabIndex++;
+      });
+
+      if( rowIndex < rowLength ){
+        rowValue += '\\n';
+      }
+
+      output += rowValue;
+      rowIndex++;
+
+    });
+
+    console.log('output:');
+    console.log(output);
+
+  }
 
 
 
