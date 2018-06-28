@@ -624,7 +624,6 @@ $(document).ready(function() {
 
   }
 
-
   function prijsFontLoad(element, length, i) {
 
     var fonts_folder = 'fonts/';
@@ -685,6 +684,33 @@ $(document).ready(function() {
       $(element).find('prijs:eq(0)').css('letter-spacing', '-0.05em');
       $(element).find('prijs:eq(1)').css('letter-spacing', '-0.05em');
     }
+
+  }
+
+  $('.prijsoutput').on('click', function() {
+    formatPrijsOutput( $('#block4') );
+  });
+
+  function formatPrijsOutput(element){
+
+    var output = '';
+
+    var elem = $(element).find('font').first().clone().removeAttr('style');
+
+    $(elem).find('prijs').each(function(){
+
+      $(this).removeAttr('contenteditable');
+      $(this).removeAttr('style');
+
+      output += $(this)[0].outerHTML;
+
+    });
+
+    elem = $(elem).empty().append(output);
+    output = $(elem)[0].outerHTML;
+
+    console.log('output:');
+    console.log(output);
 
   }
 
