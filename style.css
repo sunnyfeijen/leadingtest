@@ -54,6 +54,10 @@ body {
   margin: 0;
 }
 
+.container font prijs{
+  display: inline-block;
+}
+
 .container p span{
   /* display: block; */
 }

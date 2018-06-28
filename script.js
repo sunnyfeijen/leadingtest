@@ -136,6 +136,13 @@ $(document).ready(function() {
       var ascenderNormalized = ascender / emUnits
       var descenderNormalized = descender / emUnits
 
+
+      var capheight = font.tables.os2.sCapHeight;
+      var capheightNormalized = capheight / emUnits;
+      console.log(capheightNormalized);
+      console.log(font);
+      console.log(descenderNormalized);
+
       //TODO not the correct value for VerneerW01-Two
       // if( window.navigator.platform.toLowerCase().includes('win') ){
       //   // for Windows
@@ -582,8 +589,8 @@ $(document).ready(function() {
     $(element).find('font').each(function(i) {
 
       horizontalAlign(this);
-      fontLoad(this, length, i);
-      setFont(this);
+      setPrijsFont(this);
+      prijsFontLoad(this, length, i);
 
       // wrapLines(this);
       // removeBr(this);
@@ -593,6 +600,93 @@ $(document).ready(function() {
 
   }
 
+
+  function setPrijsFont(element) {
+
+    // set font-family
+    var fontFamily = $(element).attr('fontname');
+    $(element).css("font-family", fontFamily);
+
+    // set font size
+    var fontSize = $(element).attr('fontsize');
+    $(element).find('prijs').each(function(){
+
+      var childFontSize = $(this).attr('fontsize');
+
+      if( typeof childFontSize != 'undefined' && childFontSize.includes('%') ){
+        childFontSize = childFontSize.replace('%', '');
+        fontSize = fontSize * (childFontSize / 100);
+      }
+
+      $(this).css("font-size", fontSize+'pt');
+
+    })
+
+  }
+
+
+  function prijsFontLoad(element, length, i) {
+
+    var fonts_folder = 'fonts/';
+    var font_family = $(element).attr('fontname');
+    var font_path = fonts_folder+font_family;
+
+    const opentype = require("opentype.js");
+
+    var fontObj = opentype.load(font_path+'.ttf', function(err, font) {
+      if (err) {
+          console.log('Could not get metrics from ' + font_family + ' -> ' + err);
+      } else {
+        alignPrijs(element, font, err, length, i);
+        console.log(font_family+' metrics loaded');
+      }
+    });
+
+    return fontObj;
+  }
+
+  function alignPrijs(element, font, err, length, i) {
+    //TODO compensate leading for alignment
+
+    if(!err){
+
+      var emUnits = font.unitsPerEm;
+      var ascender = font.tables.os2.sTypoAscender;
+      var descender = font.tables.os2.sTypoDescender;
+      var ascenderNormalized = ascender / emUnits
+      var descenderNormalized = descender / emUnits
+      var capheight = font.tables.os2.sCapHeight;
+      var capheightNormalized = capheight / emUnits;
+
+      var fontsize = $(element).attr('fontsize');
+      var vertical_align = $(element).closest('.block').attr('vertical-align');
+      if( vertical_align == 'bottom' && i == (length -1) ){
+        // aligned bottom and last paragraph
+        if( fontsize != '' && typeof fontsize != 'undefined' ){
+
+          var compensation = fontsize * descenderNormalized;
+          $(element).css("margin-bottom", compensation+'pt');
+
+        }
+      }
+
+      // Rise price after decimal
+      var fontSizes = $(element).find('prijs').map(function() {
+        return $(this).css('font-size').replace('px', '');
+      }).get();
+
+      var bigAscender = Math.max.apply(Math,fontSizes) * capheightNormalized;
+      var smallAscender = Math.min.apply(Math,fontSizes) * capheightNormalized;
+      var difference = (bigAscender - smallAscender) * -1;
+
+      $(element).find('prijs').last().css('transform', 'translateY('+difference+'px)');
+
+      // Charspacing
+      $(element).find('prijs:eq(0)').css('letter-spacing', '-0.05em');
+      $(element).find('prijs:eq(1)').css('letter-spacing', '-0.05em');
+    }
+
+  }
 
 
 });
