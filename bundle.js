@@ -12456,6 +12456,10 @@ $(document).ready(function() {
       blockFormat(this);
     }
 
+    if( type == 'prijs' ){
+      prijsFormat(this);
+    }
+
     if( type == 'tabflow' ){
       //tabFormat(this);
       // tabFormatInit(tabBlock, tabString);
@@ -12543,17 +12547,18 @@ $(document).ready(function() {
     var font_family = $(element).attr('fontname');
     var font_path = fonts_folder+font_family;
 
-    const opentype = require("opentype.js")
+    const opentype = require("opentype.js");
 
     var fontObj = opentype.load(font_path+'.ttf', function(err, font) {
       if (err) {
           console.log('Could not get metrics from ' + font_family + ' -> ' + err);
       } else {
-        compensateLeading(element, font, err, length, i)
+        compensateLeading(element, font, err, length, i);
         console.log(font_family+' metrics loaded');
       }
     });
 
+    return fontObj;
   }
 
   function setFont(element) {
@@ -12579,27 +12584,27 @@ $(document).ready(function() {
       var ascenderNormalized = ascender / emUnits
       var descenderNormalized = descender / emUnits
 
+      //TODO not the correct value for VerneerW01-Two
+      // if( window.navigator.platform.toLowerCase().includes('win') ){
+      //   // for Windows
+      //   var winAscent = font.tables.os2.usWinAscent;
+      //   var winDescent = font.tables.os2.usWinDescent;
+      //   ascenderNormalized = (winAscent / emUnits);
+      //   descenderNormalized = (winDescent / emUnits) * -1;
+      //
+      // }
+      // if( window.navigator.platform.toLowerCase().includes('mac') ){
+      //   // for Mac
+      //   var hheadAscent = font.tables.hhea.ascender;
+      //   var hheadDescent = font.tables.hhea.descender;
+      //   ascenderNormalized = (hheadAscent / emUnits);
+      //   descenderNormalized = (hheadDescent / emUnits);
+      // }
 
-      if( window.navigator.platform.includes('win') !== -1 ){
-        // for Windows
-        var winAscent = font.tables.os2.usWinAscent;
-        var winDescent = font.tables.os2.usWinDescent;
-        ascenderNormalized = (winAscent / emUnits);
-        descenderNormalized = (winDescent / emUnits) * -1;
-
-      }
-      if( window.navigator.platform.includes('mac') !== -1 ){
-        // for Mac
-        var hheadAscent = font.tables.hhea.ascender;
-        var hheadDescent = font.tables.hhea.descender;
-        ascenderNormalized = (hheadAscent / emUnits);
-        descenderNormalized = (hheadDescent / emUnits);
-      }
-
-
-      var fontsize = $(element).attr('font-size');
+      var fontsize = $(element).attr('fontsize');
 
       var vertical_align = $(element).closest('.block').attr('vertical-align');
+
       if( vertical_align == 'bottom' && i == (length -1) ){
         // aligned bottom and last paragraph
 
@@ -12758,9 +12763,13 @@ $(document).ready(function() {
   var tabBlock = $('#block3');
   var tabString = '<font fontname="AmericanTypewriter" fontsize="20" leading="40" fillcolor="{ cmyk 0 0 0 1 }" alignment="left" >Jonge kaas platstuk 50+</font>\t<font fontname="AmericanTypewriter" fontsize="20" leading="40" fillcolor="{ cmyk 0 0 0 1 }" alignment="left" ></font>\t<font fontname="AmericanTypewriter" fontsize="20" leading="40" fillcolor="{ cmyk 0 0 0 1 }" alignment="left" class=schrapprijs>5.75</font>\t<font fontname="VeneerW01-Two" fontsize="40" leading="20" fillcolor="cmyk { 0 0 0 1 }" alignment="left" >4.99</font>\n<font fontname="AmericanTypewriter" fontsize="20" leading="40" fillcolor="{ cmyk 0 0 0 1 }" alignment="left" >Jong belegen platstuk 50+</font>\t<font fontname="AmericanTypewriter" fontsize="20" leading="40" fillcolor="{ cmyk 0 0 0 1 }" alignment="left" ></font>\t<font fontname="AmericanTypewriter" fontsize="20" leading="40" fillcolor="{ cmyk 0 0 0 1 }" alignment="left" class=schrapprijs>6.49</font>\t<font fontname="VeneerW01-Two" fontsize="40" leading="20" fillcolor="cmyk { 0 0 0 1 }" alignment="left" >5.49</font>\n<font fontname="AmericanTypewriter" fontsize="20" leading="40" fillcolor="{ cmyk 0 0 0 1 }" alignment="left" >Belegen kaas platstuk 50+</font>\t<font fontname="AmericanTypewriter" fontsize="20" leading="40" fillcolor="{ cmyk 0 0 0 1 }" alignment="left" ></font>\t<font fontname="AmericanTypewriter" fontsize="20" leading="40" fillcolor="{ cmyk 0 0 0 1 }" alignment="left" class=schrapprijs>6.99</font>\t<font fontname="VeneerW01-Two" fontsize="40" leading="20" fillcolor="cmyk { 0 0 0 1 }" alignment="left" >5.99</font>\n<font fontname="AmericanTypewriter" fontsize="20" leading="40" fillcolor="{ cmyk 0 0 0 1 }" alignment="left" >Oude kaas platstuk 50+</font>\t<font fontname="AmericanTypewriter" fontsize="20" leading="40" fillcolor="{ cmyk 0 0 0 1 }" alignment="left" ></font>\t<font fontname="AmericanTypewriter" fontsize="20" leading="40" fillcolor="{ cmyk 0 0 0 1 }" alignment="left" class=schrapprijs>7.99</font>\t<font fontname="VeneerW01-Two" fontsize="40" leading="20" fillcolor="cmyk { 0 0 0 1 }" alignment="left" >6.99</font>';
 
+  var tabString = "<font encoding=unicode fontname='AmericanTypewriter' fontsize='20' leading='40' fillcolor='{ cmyk 0 0 0 1 }' alignment='left' >Jonge kaas platstuk 50+</font>\t<font encoding=unicode fontname='AmericanTypewriter' fontsize='20' leading='40' fillcolor='{ cmyk 0 0 0 1 }' alignment='left' ></font>\t<font encoding=unicode fontname='AmericanTypewriter' fontsize='20' leading='40' fillcolor='{ cmyk 0 0 0 1 }' alignment='left' ><matchbox class='schrapprijs'>5.75<matchbox end></font>\t<font encoding=unicode fontname='VeneerW01-Two' fontsize='40' leading='20' fillcolor='{ cmyk 0 0 0 1 }' alignment='left' >4.99</font>\n<font encoding=unicode fontname='AmericanTypewriter' fontsize='20' leading='40' fillcolor='{ cmyk 0 0 0 1 }' alignment='left' >Jong belegen platstuk 50+</font>\t<font encoding=unicode fontname='AmericanTypewriter' fontsize='20' leading='40' fillcolor='{ cmyk 0 0 0 1 }' alignment='left' ></font>\t<font encoding=unicode fontname='AmericanTypewriter' fontsize='20' leading='40' fillcolor='{ cmyk 0 0 0 1 }' alignment='left' ><matchbox class='schrapprijs'>6.49<matchbox end></font>\t<font encoding=unicode fontname='VeneerW01-Two' fontsize='40' leading='20' fillcolor='{ cmyk 0 0 0 1 }' alignment='left' >5.49</font>\n<font encoding=unicode fontname='AmericanTypewriter' fontsize='20' leading='40' fillcolor='{ cmyk 0 0 0 1 }' alignment='left' >Belegen kaas platstuk 50+</font>\t<font encoding=unicode fontname='AmericanTypewriter' fontsize='20' leading='40' fillcolor='{ cmyk 0 0 0 1 }' alignment='left' ></font>\t<font encoding=unicode fontname='AmericanTypewriter' fontsize='20' leading='40' fillcolor='{ cmyk 0 0 0 1 }' alignment='left' ><matchbox class='schrapprijs'>6.99<matchbox end></font>\t<font encoding=unicode fontname='VeneerW01-Two' fontsize='40' leading='20' fillcolor='{ cmyk 0 0 0 1 }' alignment='left' >5.99</font>\n<font encoding=unicode fontname='AmericanTypewriter' fontsize='20' leading='40' fillcolor='{ cmyk 0 0 0 1 }' alignment='left' >Oude kaas platstuk 50+</font>\t<font encoding=unicode fontname='AmericanTypewriter' fontsize='20' leading='40' fillcolor='{ cmyk 0 0 0 1 }' alignment='left' ></font>\t<font encoding=unicode fontname='AmericanTypewriter' fontsize='20' leading='40' fillcolor='{ cmyk 0 0 0 1 }' alignment='left' ><matchbox class='schrapprijs'>7.99<matchbox end></font>\t<font encoding=unicode fontname='VeneerW01-Two' fontsize='40' leading='20' fillcolor='{ cmyk 0 0 0 1 }' alignment='left' >6.99</font>";
+
   formatInit(block, string);
 
   function formatInit(element, value){
+
+    console.log(element);
 
     var type = $(element).attr('type');
 
@@ -12845,6 +12854,11 @@ $(document).ready(function() {
     }
 
     if( type == 'tabflow' && editable ){
+      var font = $(this).find('font');
+      makeEditable( font );
+    }
+
+    if( type == 'prijs' && editable ){
       var font = $(this).find('font');
       makeEditable( font );
     }
@@ -13000,6 +13014,30 @@ $(document).ready(function() {
 
     console.log('output:');
     console.log(output);
+
+  }
+
+
+
+
+//////////// PRIJS \\\\\\\\\\\\\\
+
+  function prijsFormat(element){
+
+    verticalAlign(element);
+
+    var length = $(element).find('font').length;
+    $(element).find('font').each(function(i) {
+
+      horizontalAlign(this);
+      fontLoad(this, length, i);
+      setFont(this);
+
+      // wrapLines(this);
+      // removeBr(this);
+      // setLeading(this, i);
+      // formatNextline(this);
+    });
 
   }
 
