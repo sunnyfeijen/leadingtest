@@ -12866,7 +12866,7 @@ $(document).ready(function() {
       //makeEditable( font );
     }
 
-    if( type == 'prijs' && editable ){
+    if( type == 'price' && editable ){
       //var font = $(this).find('font');
       //console.log('asda');
       //makeEditable( font );
@@ -13032,14 +13032,18 @@ $(document).ready(function() {
 //////////// PRIJS \\\\\\\\\\\\\\
 
 
-  var prijstring = '<font fontname="VeneerW01-Two" alignment="right" fontsize="160" leading="180" fillcolor="{ cmyk 0,0,0,1 }" contenteditable="true"><prijs>4</prijs><prijs charspacing="-9%">.</prijs><prijs fontsize="75%" textrise="47%" charspacing="0">60</prijs></font>';
-  prijsInit($('#block4'), prijstring);
+  var prijsStyle = [];
+  var prijsstringinput = '<font fontname="VeneerW01-Two" alignment="right" fontsize="160" leading="180" fillcolor="{ cmyk 0,0,0,1 }" contenteditable="true"><price>4</price><price charspacing="-9%">.</price><price fontsize="75%" textrise="47%" charspacing="0">60</price></font>';
+
+  prijsInit($('#block4'), prijsstringinput);
 
   function prijsInit(element, value){
 
+    console.log('prijsinit');
+
     var type = $(element).attr('type');
 
-    if( type == 'prijs' ){
+    if( type == 'price' ){
       var container = $(element).find('.container');
 
       $(value).each(function(){
@@ -13050,11 +13054,18 @@ $(document).ready(function() {
       $(element).find('font').attr('contenteditable', 'true');
 
       prijsFormat(element);
+
+      // prijsStyle = [];
+      // $(element).find('price').each(function(){
+      //   var clone = $(this).clone().html('');
+      //   prijsStyle.push( $(clone)[0].outerHTML );
+      // })
     }
 
   }
 
   function prijsFormat(element){
+    console.log('prijsFormat');
 
     verticalAlign(element);
 
@@ -13065,10 +13076,6 @@ $(document).ready(function() {
       setPrijsFont(this);
       prijsFontLoad(this, length, i);
 
-      // wrapLines(this);
-      // removeBr(this);
-      // setLeading(this, i);
-      // formatNextline(this);
     });
 
   }
@@ -13081,7 +13088,7 @@ $(document).ready(function() {
 
     // set font size
     var fontSize = $(element).attr('fontsize');
-    $(element).find('prijs').each(function(){
+    $(element).find('price').each(function(){
 
       var childFontSize = $(this).attr('fontsize');
 
@@ -13142,45 +13149,69 @@ $(document).ready(function() {
       }
 
       // Rise price after decimal
-      var fontSizes = $(element).find('prijs').map(function() {
+      var fontSizes = $(element).find('price').map(function() {
         return $(this).css('font-size').replace('px', '');
       }).get();
+
+      console.log('fontSizes:');
+      console.log(fontSizes);
 
       var bigAscender = Math.max.apply(Math,fontSizes) * capheightNormalized;
       var smallAscender = Math.min.apply(Math,fontSizes) * capheightNormalized;
       var difference = (bigAscender - smallAscender) * -1;
 
-      $(element).find('prijs').last().css('transform', 'translateY('+difference+'px)');
+      $(element).find('price').last().css('transform', 'translateY('+difference+'px)');
 
       // Charspacing
-      $(element).find('prijs:eq(0)').css('letter-spacing', '-0.05em');
-      $(element).find('prijs:eq(1)').css('letter-spacing', '-0.05em');
+      $(element).find('price:eq(0)').css('letter-spacing', '-0.05em');
+      $(element).find('price:eq(1)').css('letter-spacing', '-0.05em');
     }
 
   }
 
   function splitPrice(element){
 
+    var priceLength = $(element).find('price').length
+    var spanLength = $(element).find('span').length
+
     var prijsString = '';
-    $(element).find('prijs').each(function(){
-      prijsString += $(this)[0].innerHTML;
-    });
+
+    if( priceLength > 0 ){
+      $(element).find('price').each(function(){
+        prijsString += $(this)[0].innerHTML;
+      })
+    }
+
+    if( spanLength > 0 ){
+      $(element).find('span').each(function(){
+        prijsString += $(this)[0].innerHTML;
+      })
+    }
+
 
     prijsString = prijsString.split('.');
     prijsString.splice(1, 0, '.');
 
-    var fontString = '';
-    for (var i = 0; i < prijsStyle.length; i++) {
 
-      prijsStyle[i] = $(prijsStyle[i]).html( prijsString[i] )
-      //console.log( $(prijsStyle[i])[0].outerHTML );
+    // place new values in original string
+    var newInput = $(element).html('');
+    var newInputPrice = '';
 
-      fontString += $(prijsStyle[i])[0].outerHTML;
-    }
+    $(prijsstringinput).find('price').each(function(i){
+
+      $(this).html( prijsString[i] );
+      newInputPrice += $(this)[0].outerHTML;
+
+    });
+
+    $(newInput).html(newInputPrice);
+    newInput = $(newInput)[0].outerHTML;
 
     // append new string to font
-    $(element).empty().append($(fontString));
+    var block = $(element).closest('.block');
+    $(element).remove();
 
+    prijsInit(block, newInput);
   }
 
   function formatPrijsOutput(element){
@@ -13189,7 +13220,7 @@ $(document).ready(function() {
 
     var elem = $(element).find('font').first().clone().removeAttr('style');
 
-    $(elem).find('prijs').each(function(){
+    $(elem).find('price').each(function(){
 
       $(this).removeAttr('contenteditable');
       $(this).removeAttr('style');
@@ -13207,24 +13238,30 @@ $(document).ready(function() {
   }
 
 
-  // contenteditable set
-  var prijsStyle = [];
-  $('#block4').find('font').on('focusin', function() {
-
-    prijsStyle = [];
-    $(this).find('prijs').each(function(){
-
-      var clone = $(this).clone().html('');
-      prijsStyle.push( $(clone)[0].outerHTML );
-
-    })
-
-  });
-
   // contenteditable unset
-  $('#block4').find('font').on('focusout', function() {
-    splitPrice(this);
-  });
+  $(document).on('focusout',function(e){
+
+    var target = e.target;
+    if( !$(target).hasClass('block') ){
+      target = $(target).closest('.block');
+    }
+
+    var type = $(target).attr('type');
+
+    if( type == 'price' ){
+
+      $(target).find('font').each(function(){
+
+        console.log('this');
+        console.log( $(this) );
+
+        splitPrice(this);
+      })
+
+    }
+
+  })
+
 
   // get output
   $('.prijsoutput').on('click', function() {
