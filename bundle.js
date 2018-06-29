@@ -13163,8 +13163,10 @@ $(document).ready(function() {
       $(element).find('price').last().css('transform', 'translateY('+difference+'px)');
 
       // Charspacing
-      $(element).find('price:eq(0)').css('letter-spacing', '-0.05em');
-      $(element).find('price:eq(1)').css('letter-spacing', '-0.05em');
+      //$(element).find('price:eq(0)').css('margin-right', '-0.05em');
+      //$(element).find('price:eq(1)').css('letter-spacing', '-0.05em');
+
+      $(element).find('price:eq(1)').css({'letter-spacing' : '-0.05em', 'margin-left' : '-0.05em'});
     }
 
   }
@@ -13188,7 +13190,7 @@ $(document).ready(function() {
       })
     }
 
-
+    prijsString = prijsString.replace(',', '.');
     prijsString = prijsString.split('.');
     prijsString.splice(1, 0, '.');
 
