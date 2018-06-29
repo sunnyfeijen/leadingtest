@@ -26,16 +26,17 @@ $(document).ready(function() {
 
 
     // set paragraph options
-    var length = $(element).find('p').length;
-    $(element).find('p').each(function(i) {
+    // var length = $(element).find('p').length;
+    // $(element).find('p').each(function(i) {
+    //
+    //   fontLoad(this, length, i);
+    //   setFont(this);
+    //   wrapLines(this);
+    //   removeBr(this);
+    //   setLeading(this, i);
+    // });
 
-      fontLoad(this, length, i);
-      setFont(this);
-      wrapLines(this);
-      removeBr(this);
-      setLeading(this, i);
-    });
-
+    var length = $(element).find('font').length;
     $(element).find('font').each(function(i) {
 
       horizontalAlign(this);
@@ -405,21 +406,22 @@ $(document).ready(function() {
 
   $('.block').each(function(){
 
-    var editable = $(this).attr('editable');
+    var editable = $(this).attr('contenteditable');
     var type = $(this).attr('type');
 
     if(editable){
-      makeEditable( $(this) );
+      //makeEditable( $(this) );
     }
 
     if( type == 'tabflow' && editable ){
       var font = $(this).find('font');
-      makeEditable( font );
+      //makeEditable( font );
     }
 
     if( type == 'prijs' && editable ){
-      var font = $(this).find('font');
-      makeEditable( font );
+      //var font = $(this).find('font');
+      //console.log('asda');
+      //makeEditable( font );
     }
 
   });
@@ -581,6 +583,29 @@ $(document).ready(function() {
 
 //////////// PRIJS \\\\\\\\\\\\\\
 
+
+  var prijstring = '<font fontname="VeneerW01-Two" alignment="right" fontsize="160" leading="180" fillcolor="{ cmyk 0,0,0,1 }" contenteditable="true"><prijs>4</prijs><prijs charspacing="-9%">.</prijs><prijs fontsize="75%" textrise="47%" charspacing="0">60</prijs></font>';
+  prijsInit($('#block4'), prijstring);
+
+  function prijsInit(element, value){
+
+    var type = $(element).attr('type');
+
+    if( type == 'prijs' ){
+      var container = $(element).find('.container');
+
+      $(value).each(function(){
+        $(container).append(this);
+      });
+
+      // make editable
+      $(element).find('font').attr('contenteditable', 'true');
+
+      prijsFormat(element);
+    }
+
+  }
+
   function prijsFormat(element){
 
     verticalAlign(element);
@@ -599,7 +624,6 @@ $(document).ready(function() {
     });
 
   }
-
 
   function setPrijsFont(element) {
 
@@ -687,9 +711,29 @@ $(document).ready(function() {
 
   }
 
-  $('.prijsoutput').on('click', function() {
-    formatPrijsOutput( $('#block4') );
-  });
+  function splitPrice(element){
+
+    var prijsString = '';
+    $(element).find('prijs').each(function(){
+      prijsString += $(this)[0].innerHTML;
+    });
+
+    prijsString = prijsString.split('.');
+    prijsString.splice(1, 0, '.');
+
+    var fontString = '';
+    for (var i = 0; i < prijsStyle.length; i++) {
+
+      prijsStyle[i] = $(prijsStyle[i]).html( prijsString[i] )
+      //console.log( $(prijsStyle[i])[0].outerHTML );
+
+      fontString += $(prijsStyle[i])[0].outerHTML;
+    }
+
+    // append new string to font
+    $(element).empty().append($(fontString));
+
+  }
 
   function formatPrijsOutput(element){
 
@@ -713,6 +757,32 @@ $(document).ready(function() {
     console.log(output);
 
   }
+
+
+  // contenteditable set
+  var prijsStyle = [];
+  $('#block4').find('font').on('focusin', function() {
+
+    prijsStyle = [];
+    $(this).find('prijs').each(function(){
+
+      var clone = $(this).clone().html('');
+      prijsStyle.push( $(clone)[0].outerHTML );
+
+    })
+
+  });
+
+  // contenteditable unset
+  $('#block4').find('font').on('focusout', function() {
+    splitPrice(this);
+  });
+
+  // get output
+  $('.prijsoutput').on('click', function() {
+    formatPrijsOutput( $('#block4') );
+  });
+
 
 
 });
